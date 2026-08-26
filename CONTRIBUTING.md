@@ -155,7 +155,8 @@ git commit -am "build(release): 0.1.0"
 git push -u origin release/0.1.0
 gh pr create --base main --title "build(release): 0.1.0"
 
-# CI green → merge → tag
+# CI green → merge WITH A MERGE COMMIT (never --squash, see below) → tag
+gh pr merge --merge
 git checkout main && git pull
 git tag -a v0.1.0 -m "v0.1.0" && git push origin v0.1.0
 
@@ -166,6 +167,17 @@ gh pr create --base develop --head main --title "chore: sync release 0.1.0 back 
 **Bump the version in both places.** `plugin.json` *and* the marketplace entry —
 that pairing is what makes `claude plugin update` notice there is something new.
 Miss one and installed copies stay silently stale.
+
+**Merge the release PR with a merge commit, not a squash.**
+
+Feature PRs are squash-merged — the PR title becomes one clean commit on `develop`.
+Release PRs must **not** be. A squash creates a brand-new commit on `main` with no
+ancestry link to the release branch, so `main` and `develop` end up sharing no common
+ancestor for the files the release touched. The merge-back then fails with an add/add
+conflict on `CHANGELOG.md` instead of fast-forwarding.
+
+This bit us on 0.1.0 and had to be repaired with a `hotfix/` branch. Use
+`gh pr merge --merge` for a release, and reserve `--squash` for features.
 
 **Do not skip the merge-back.** A release merged only into `main` leaves `develop`
 holding stale version numbers, and the next release branch inherits them. This is
