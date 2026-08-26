@@ -1,0 +1,115 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+# No secrets are used anywhere in this workflow. `claude plugin validate` is a
+# local schema check that needs no authentication — if a step here ever starts
+# asking for an API key, something is wrong.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Emits the plugin list at runtime rather than hardcoding a matrix. Hardcoding
+  # would mean editing this file in every future feature — a step that gets
+  # forgotten exactly when it matters, silently dropping a plugin from validation.
+  # Must emit [] cleanly: that is the state the repository ships in today.
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      plugins: ${{ steps.list.outputs.plugins }}
+      count: ${{ steps.list.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: list
+        name: Discover plugin directories
+        run: |
+          if [ -d plugins ]; then
+            list=$(find plugins -mindepth 1 -maxdepth 1 -type d -printf '%f\n' \
+              | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          else
+            list='[]'
+          fi
+          count=$(printf '%s' "$list" | jq 'length')
+          echo "plugins=$list" >> "$GITHUB_OUTPUT"
+          echo "count=$count"   >> "$GITHUB_OUTPUT"
+          echo "Discovered $count plugin(s): $list"
+
+  validate-marketplace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate marketplace manifest
+        run: claude plugin validate .
+
+  # Validating the marketplace root is NOT enough: a root-level validate does not
+  # descend into the per-plugin manifests it references, so a broken plugin passes
+  # cleanly and then fails at install time with an opaque error.
+  # See anthropics/claude-code#60725. Hence one job per plugin directory.
+  validate-plugins:
+    needs: discover
+    if: needs.discover.outputs.count != '0'
+    runs-on: ubuntu-latest
+    strategy:
+      # Report every broken plugin in one run. Stopping at the first turns a single
+      # CI round-trip into several.
+      fail-fast: false
+      matrix:
+        plugin: ${{ fromJson(needs.discover.outputs.plugins) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate ${{ matrix.plugin }}
+        run: claude plugin validate "plugins/${{ matrix.plugin }}"
+
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # These are repository scripts rather than inline steps on purpose: the
+      # maintainer can run the exact same checks locally before pushing, which is
+      # what makes "run the checks first" an instruction instead of advice.
+      - name: Test hooks
+        run: node scripts/test-hooks.mjs
+
+      - name: Lint skills
+        run: node scripts/lint-skills.mjs
+
+      - name: Parse every tracked JSON file
+        run: |
+          status=0
+          while IFS= read -r f; do
+            if ! node -e 'JSON.parse(require("fs").readFileSync(process.argv[1],"utf8"))' "$f" 2>/dev/null; then
+              echo "::error file=$f::Malformed JSON"
+              status=1
+            fi
+          done < <(git ls-files '*.json')
+          exit $status

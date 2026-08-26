@@ -1,0 +1,64 @@
+name: branch-policy
+
+# Branch protection blocks direct pushes, but it cannot express WHICH branch may
+# target WHICH base. That topology is the git-flow model itself, so it lives here.
+#
+#   feature/NNN-slug  ->  develop
+#   release/*         ->  main, then back into develop
+#   hotfix/*          ->  main, then back into develop
+#
+# Nothing else reaches main.
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+jobs:
+  branch-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name and pull request target
+        # Branch names are attacker-controlled input on a public repository, so
+        # they are passed through env rather than interpolated into the script.
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          feature='^feature/[0-9]{3}-[a-z0-9]+(-[a-z0-9]+)*$'
+          release='^release/[a-z0-9][a-z0-9._-]*$'
+          hotfix='^hotfix/[a-z0-9][a-z0-9._-]*$'
+
+          echo "head: $HEAD_REF"
+          echo "base: $BASE_REF"
+
+          if [ "$BASE_REF" = "main" ]; then
+            # Only a release or a hotfix reaches main. 'develop' is allowed as a
+            # head so that a release can be promoted from the integration branch.
+            if [[ "$HEAD_REF" =~ $release ]] \
+              || [[ "$HEAD_REF" =~ $hotfix ]] \
+              || [ "$HEAD_REF" = "develop" ]; then
+              echo "OK: '$HEAD_REF' may target main."
+            else
+              echo "::error::'$HEAD_REF' may not target main. Only release/*, hotfix/*, or develop can. Cut a release branch from develop: git checkout develop && git checkout -b release/0.1.0"
+              exit 1
+            fi
+
+          elif [ "$BASE_REF" = "develop" ]; then
+            # 'main' and 'release/*' are allowed as heads here: after a release
+            # merges to main it MUST be merged back, or develop keeps stale
+            # version numbers and the next release inherits them. Without this
+            # allowance the mandatory merge-back is rejected by our own policy.
+            if [[ "$HEAD_REF" =~ $feature ]] \
+              || [[ "$HEAD_REF" =~ $release ]] \
+              || [[ "$HEAD_REF" =~ $hotfix ]] \
+              || [ "$HEAD_REF" = "main" ]; then
+              echo "OK: '$HEAD_REF' may target develop."
+            else
+              echo "::error::Branch '$HEAD_REF' does not match the required format 'feature/NNN-slug' (for example feature/002-commit-craft). Feature directories are created by /speckit-specify; create the branch with: git checkout -b feature/NNN-slug"
+              exit 1
+            fi
+          fi

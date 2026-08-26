@@ -1,0 +1,13 @@
+{
+  "name": "ai-marketplace",
+  "owner": {
+    "name": "yurifws",
+    "email": "yurifws@gmail.com",
+    "url": "https://github.com/yurifws"
+  },
+  "metadata": {
+    "version": "0.1.0",
+    "description": "Personal Claude Code plugins by yurifws: commit conventions, security guard-rails, and a default working persona."
+  },
+  "plugins": []
+}
