@@ -48,6 +48,25 @@
         "credentials",
         "guardrails"
       ]
+    },
+    {
+      "name": "focus-mode",
+      "source": "./plugins/focus-mode",
+      "description": "Replaces the default persona for every session: plans before editing, makes the smallest change that works, verifies rather than claims, and never commits unasked.",
+      "version": "0.1.0",
+      "author": {
+        "name": "yurifws",
+        "email": "yurifws@gmail.com"
+      },
+      "homepage": "https://github.com/yurifws/ai_marketplace/tree/main/plugins/focus-mode",
+      "license": "MIT",
+      "category": "productivity",
+      "keywords": [
+        "persona",
+        "agent",
+        "workflow",
+        "defaults"
+      ]
     }
   ]
 }

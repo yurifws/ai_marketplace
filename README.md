@@ -23,10 +23,7 @@ Then install whichever you want:
 |---|---|---|
 | [commit-craft](plugins/commit-craft) | Conventional Commits and a consistent PR description format | Skill — the model applies it when relevant |
 | [guard-rails](plugins/guard-rails) | Blocks writes containing credentials; injects repo context at session start | Hook — the harness enforces it |
-
-<!--
 | [focus-mode](plugins/focus-mode) | A default working persona: plans first, minimal changes, never commits unasked | Agent default — replaces the system prompt |
--->
 
 Each plugin is independent. Install one, all, or none, and remove any of them
 without affecting the others.
