@@ -13,8 +13,16 @@ Both must match, or `claude plugin update` will not notice the new version.
 
 ### Added
 
-- Marketplace catalog at `.claude-plugin/marketplace.json` (`ai-marketplace`),
-  currently publishing no plugins.
+- **commit-craft 0.1.0** — first published plugin. Two skills:
+  `conventional-commits` (Conventional Commits authoring; proposes a message and
+  waits for approval, never runs `git add -A` unprompted, refuses `--no-verify`)
+  and `pr-description` (four-section PR descriptions against a configurable base
+  branch, defaulting to `develop`).
+- `scripts/check-versions.mjs` — asserts each plugin's `version` and `name` match
+  its catalog entry, that every plugin ships a README and LICENSE, and that no
+  plugin directory is missing from the catalog. A version bumped in only one of
+  the two files produces no error anywhere; installed copies simply stay stale.
+- Marketplace catalog at `.claude-plugin/marketplace.json` (`ai-marketplace`).
 - Spec-Driven Development workflow via spec-kit, with the project constitution
   at `.specify/memory/constitution.md`.
 - CI pipeline (`.github/workflows/ci.yml`): marketplace validation, per-plugin

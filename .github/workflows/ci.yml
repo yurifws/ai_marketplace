@@ -103,6 +103,11 @@ jobs:
       - name: Lint skills
         run: node scripts/lint-skills.mjs
 
+      # A plugin's version lives in two files. Bump one and forget the other and
+      # nothing errors anywhere — installed copies just stay stale forever.
+      - name: Check catalog consistency
+        run: node scripts/check-versions.mjs
+
       - name: Parse every tracked JSON file
         run: |
           status=0
