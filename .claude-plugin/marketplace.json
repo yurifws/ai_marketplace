@@ -28,6 +28,26 @@
         "conventional-commits",
         "pull-request"
       ]
+    },
+    {
+      "name": "guard-rails",
+      "source": "./plugins/guard-rails",
+      "description": "Blocks writes containing recognisable credentials, and injects repository state and rules at session start. This plugin can refuse actions.",
+      "version": "0.1.0",
+      "author": {
+        "name": "yurifws",
+        "email": "yurifws@gmail.com"
+      },
+      "homepage": "https://github.com/yurifws/ai_marketplace/tree/main/plugins/guard-rails",
+      "license": "MIT",
+      "category": "security",
+      "keywords": [
+        "security",
+        "hooks",
+        "secrets",
+        "credentials",
+        "guardrails"
+      ]
     }
   ]
 }
