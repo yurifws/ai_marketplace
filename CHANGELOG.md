@@ -13,6 +13,12 @@ Both must match, or `claude plugin update` will not notice the new version.
 
 ### Added
 
+- **guard-rails 0.1.0** — the first plugin that can *refuse* an action. Two hooks:
+  `check-secrets` (`PreToolUse` on `Write`/`Edit`/`MultiEdit`/`NotebookEdit`, exits
+  `2` on recognisable credentials, reporting the kind of secret and never its
+  value) and `session-brief` (`SessionStart`, injects branch, uncommitted count and
+  standing rules; warns when on a protected or release branch). Both fail open, so
+  a malformed payload or a missing git cannot brick a session.
 - **commit-craft 0.1.0** — first published plugin. Two skills:
   `conventional-commits` (Conventional Commits authoring; proposes a message and
   waits for approval, never runs `git add -A` unprompted, refuses `--no-verify`)
@@ -38,7 +44,6 @@ Both must match, or `claude plugin update` will not notice the new version.
 
 <!--
 Still to land before 0.1.0:
-  - guard-rails    (hooks: check-secrets, session-brief)
   - focus-mode     (agent: focus, via settings.json)
 -->
 
