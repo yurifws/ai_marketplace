@@ -1,0 +1,13 @@
+{
+  "name": "commit-craft",
+  "version": "0.1.0",
+  "description": "Conventional Commits authoring and a consistent pull request description format. Proposes messages for approval; never commits on its own.",
+  "author": {
+    "name": "yurifws",
+    "email": "yurifws@gmail.com"
+  },
+  "homepage": "https://github.com/yurifws/ai_marketplace/tree/main/plugins/commit-craft",
+  "repository": "https://github.com/yurifws/ai_marketplace",
+  "license": "MIT",
+  "keywords": ["git", "commit", "conventional-commits", "pull-request", "code-review"]
+}

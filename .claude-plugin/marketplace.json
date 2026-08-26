@@ -9,5 +9,25 @@
     "version": "0.1.0",
     "description": "Personal Claude Code plugins by yurifws: commit conventions, security guard-rails, and a default working persona."
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "commit-craft",
+      "source": "./plugins/commit-craft",
+      "description": "Conventional Commits authoring and a consistent pull request description format. Proposes messages for approval; never commits on its own.",
+      "version": "0.1.0",
+      "author": {
+        "name": "yurifws",
+        "email": "yurifws@gmail.com"
+      },
+      "homepage": "https://github.com/yurifws/ai_marketplace/tree/main/plugins/commit-craft",
+      "license": "MIT",
+      "category": "development",
+      "keywords": [
+        "git",
+        "commit",
+        "conventional-commits",
+        "pull-request"
+      ]
+    }
+  ]
 }

@@ -85,6 +85,36 @@ jobs:
       - name: Validate ${{ matrix.plugin }}
         run: claude plugin validate "plugins/${{ matrix.plugin }}"
 
+  # A matrix job's check name includes its parameter — "validate-plugins (commit-craft)"
+  # — so the name changes every time a plugin is added or renamed. That makes it
+  # impossible to mark as a required status check, since GitHub matches those by
+  # exact name. This job is the stable alias: one fixed name that aggregates the
+  # matrix and can safely be required.
+  #
+  # It must also treat "skipped" as success, because the matrix is legitimately
+  # skipped when there are no plugins.
+  plugins-gate:
+    needs: [discover, validate-plugins]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aggregate plugin validation result
+        env:
+          DISCOVER: ${{ needs.discover.result }}
+          PLUGINS: ${{ needs.validate-plugins.result }}
+          COUNT: ${{ needs.discover.outputs.count }}
+        run: |
+          if [ "$DISCOVER" != "success" ]; then
+            echo "::error::Plugin discovery did not succeed (result: $DISCOVER)."
+            exit 1
+          fi
+          case "$PLUGINS" in
+            success) echo "All $COUNT plugin(s) validated." ;;
+            skipped) echo "No plugins to validate (count: $COUNT) — nothing to do." ;;
+            *)       echo "::error::Plugin validation failed (result: $PLUGINS). See the validate-plugins jobs above for which plugin."
+                     exit 1 ;;
+          esac
+
   test-and-lint:
     runs-on: ubuntu-latest
     steps:
@@ -102,6 +132,11 @@ jobs:
 
       - name: Lint skills
         run: node scripts/lint-skills.mjs
+
+      # A plugin's version lives in two files. Bump one and forget the other and
+      # nothing errors anywhere — installed copies just stay stale forever.
+      - name: Check catalog consistency
+        run: node scripts/check-versions.mjs
 
       - name: Parse every tracked JSON file
         run: |

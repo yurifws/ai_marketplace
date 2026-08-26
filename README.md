@@ -21,10 +21,9 @@ Then install whichever you want:
 
 | Plugin | What it does | Kind of rule |
 |---|---|---|
-| _none published yet_ | | |
+| [commit-craft](plugins/commit-craft) | Conventional Commits and a consistent PR description format | Skill — the model applies it when relevant |
 
 <!--
-| [commit-craft](plugins/commit-craft) | Conventional Commits and a consistent PR description format | Skill — the model applies it when relevant |
 | [guard-rails](plugins/guard-rails) | Blocks secrets from being written; injects repo context at session start | Hook — the harness enforces it |
 | [focus-mode](plugins/focus-mode) | A default working persona: plans first, minimal changes, never commits unasked | Agent default — replaces the system prompt |
 -->
