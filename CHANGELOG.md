@@ -11,6 +11,11 @@ Both must match, or `claude plugin update` will not notice the new version.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-26
+
+First release. Three plugins, one per rule mechanism: a skill that persuades, a
+hook that enforces, and an agent default that replaces the persona.
+
 ### Added
 
 - `SECURITY.md` — reporting policy. Notably, a `guard-rails` **false positive** is
@@ -53,4 +58,5 @@ Both must match, or `claude plugin update` will not notice the new version.
 - Documentation: `README.md`, `CONTRIBUTING.md`, `docs/concepts.md`,
   `docs/installation.md`.
 
-[Unreleased]: https://github.com/yurifws/ai_marketplace/compare/main...develop
+[Unreleased]: https://github.com/yurifws/ai_marketplace/compare/v0.1.0...develop
+[0.1.0]: https://github.com/yurifws/ai_marketplace/releases/tag/v0.1.0
