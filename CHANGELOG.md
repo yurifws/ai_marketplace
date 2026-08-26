@@ -13,6 +13,10 @@ Both must match, or `claude plugin update` will not notice the new version.
 
 ### Added
 
+- **focus-mode 0.1.0** — the third and final rule mechanism: a `settings.json`
+  containing only `{ "agent": "focus" }`, which replaces the main thread's system
+  prompt for every session. Ships as a separate plugin precisely so it can be
+  disabled alone; its README leads with the warning rather than the features.
 - **guard-rails 0.1.0** — the first plugin that can *refuse* an action. Two hooks:
   `check-secrets` (`PreToolUse` on `Write`/`Edit`/`MultiEdit`/`NotebookEdit`, exits
   `2` on recognisable credentials, reporting the kind of secret and never its
@@ -41,10 +45,5 @@ Both must match, or `claude plugin update` will not notice the new version.
   runs, runnable locally before pushing.
 - Documentation: `README.md`, `CONTRIBUTING.md`, `docs/concepts.md`,
   `docs/installation.md`.
-
-<!--
-Still to land before 0.1.0:
-  - focus-mode     (agent: focus, via settings.json)
--->
 
 [Unreleased]: https://github.com/yurifws/ai_marketplace/compare/main...develop
