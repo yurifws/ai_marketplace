@@ -37,8 +37,7 @@ Both must match, or `claude plugin update` will not notice the new version.
   `docs/installation.md`.
 
 <!--
-Planned for 0.1.0:
-  - commit-craft   (skills: conventional-commits, pr-description)
+Still to land before 0.1.0:
   - guard-rails    (hooks: check-secrets, session-brief)
   - focus-mode     (agent: focus, via settings.json)
 -->
