@@ -58,7 +58,9 @@ difference can be observed rather than described.
 |---|---|
 | [docs/concepts.md](docs/concepts.md) | The mental model — layers, components, and what each one guarantees |
 | [docs/installation.md](docs/installation.md) | Installing, developing locally, troubleshooting |
+| [docs/team-setup.md](docs/team-setup.md) | Rolling this out to a team: private repos, project-level declaration, org policy |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Branching, releases, and the rules for adding a plugin |
+| [SECURITY.md](SECURITY.md) | What is in scope to report, and what this explicitly does not promise |
 | [.specify/memory/constitution.md](.specify/memory/constitution.md) | The principles every change is checked against |
 
 ## How this repository is built
