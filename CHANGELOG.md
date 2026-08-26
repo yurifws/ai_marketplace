@@ -36,4 +36,3 @@ Planned for 0.1.0:
 -->
 
 [Unreleased]: https://github.com/yurifws/ai_marketplace/compare/main...develop
-
