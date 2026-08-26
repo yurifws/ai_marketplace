@@ -1,0 +1,267 @@
+[
+  {
+    "name": "BLOCK: AWS access key in Write content",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "src/config.js",
+        "content": "export const AWS_KEY = \"AKIA2E0ZQX7MRTBK4WPL\";"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": "AWS Access Key ID"
+  },
+  {
+    "name": "BLOCK: private key header in Edit new_string",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Edit",
+      "tool_input": {
+        "file_path": "deploy/key.pem",
+        "new_string": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEA\n-----END RSA PRIVATE KEY-----"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": "private key block"
+  },
+  {
+    "name": "BLOCK: GitHub token inside one MultiEdit entry",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "MultiEdit",
+      "tool_input": {
+        "file_path": "scripts/deploy.sh",
+        "edits": [
+          {
+            "new_string": "echo starting deploy"
+          },
+          {
+            "new_string": "GH_TOKEN=ghp_A1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7r8"
+          }
+        ]
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": "GitHub token"
+  },
+  {
+    "name": "BLOCK: .env containing a credential-looking value",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "app/.env",
+        "content": "DATABASE_URL=postgres://u:p@h/db\nAPI_SECRET=k3yA9x2Lm8Qz4Rv7Tn1B\n"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": ".env file"
+  },
+  {
+    "name": "BLOCK: hardcoded credential assignment",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "src/db.py",
+        "content": "DB_PASSWORD = \"hunter2-correct-horse-battery\"\nconnect(DB_PASSWORD)"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": "hardcoded credential"
+  },
+  {
+    "name": "BLOCK: JWT embedded in source",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "src/auth.js",
+        "content": "const t = \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dBjftJeZ4CVPmB92K27uhbUJU1p1r_wW1gFWFOEjXk\";"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": "JSON Web Token"
+  },
+  {
+    "name": "ALLOW: ordinary source code",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "src/math.js",
+        "content": "export const sum = (a, b) => a + b;\nexport const mul = (a, b) => a * b;\n"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: documentation placeholder",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "README.md",
+        "content": "Set your key:\n\n```\nexport ANTHROPIC_API_KEY=<YOUR_API_KEY_HERE>\n```\n"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: AWS's own published documentation example key",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "docs/aws.md",
+        "content": "For example: AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: lockfile integrity hash (long base64, not a secret)",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "package-lock.json",
+        "content": "{ \"integrity\": \"sha512-Qw3rTyUiOp8aSdFgHjKlZxCvBnM1029384756asdfQWERTYuiopASDFGHJKLzxcvbnm==\" }"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: inline data URI",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "src/icon.js",
+        "content": "export const icon = \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk\";"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: variable named token with no literal value",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "src/lex.js",
+        "content": "let token = nextToken();\nif (token.type === 'ident') { advance(); }\n"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: empty stdin fails open rather than bricking the session",
+    "hook": "check-secrets.mjs",
+    "stdin": "",
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: malformed stdin fails open",
+    "hook": "check-secrets.mjs",
+    "stdin": "{not valid json at all",
+    "expectExit": 0
+  },
+  {
+    "name": "ALLOW: a read-only tool payload with no writable content",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Read",
+      "tool_input": {
+        "file_path": "src/app.js"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "BLOCK: a doc example nearby must not whitelist a real key in the same file",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "docs/setup.md",
+        "content": "For example, set AWS_ACCESS_KEY_ID.\n\nOurs is AKIA2E0ZQX7MRTBK4WPL\n"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": "AWS Access Key ID"
+  },
+  {
+    "name": "BLOCK: underscore-prefixed name (DB_PASSWORD) — \\b would never match this",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "src/settings.py",
+        "content": "DB_PASSWORD = \"s3cret-production-value\"\nMY_API_KEY = \"abcdefghijklmnop\"\n"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": "hardcoded credential"
+  },
+  {
+    "name": "ALLOW: api_key assigned an obvious placeholder",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "config.example.js",
+        "content": "api_key = \"<YOUR_API_KEY_HERE>\"\n"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "session-brief emits SessionStart context JSON",
+    "hook": "session-brief.mjs",
+    "stdin": {},
+    "expectExit": 0,
+    "expectStdoutJson": [
+      "hookSpecificOutput.hookEventName",
+      "hookSpecificOutput.additionalContext"
+    ]
+  },
+  {
+    "name": "ALLOW: .env holding only ordinary configuration",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": "app/.env",
+        "content": "PORT=3000\nDEBUG=true\nNODE_ENV=production\nHOST=localhost\n"
+      }
+    },
+    "expectExit": 0
+  },
+  {
+    "name": "BLOCK: .env with a database URL carrying a password",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": ".env",
+        "content": "DATABASE_URL=postgresql://user:hunter2pw@db.host:5432/app\n"
+      }
+    },
+    "expectExit": 2,
+    "expectStderrContains": ".env file"
+  },
+  {
+    "name": "ALLOW: .env with a plain URL and a version string",
+    "hook": "check-secrets.mjs",
+    "stdin": {
+      "tool_name": "Write",
+      "tool_input": {
+        "file_path": ".env",
+        "content": "API_URL=https://api.example.com/v2\nVERSION=1.2.3-beta.4\nAWS_REGION=us-east-1\n"
+      }
+    },
+    "expectExit": 0
+  }
+]

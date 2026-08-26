@@ -1,0 +1,13 @@
+{
+  "name": "guard-rails",
+  "version": "0.1.0",
+  "description": "Blocks writes containing recognisable credentials, and injects repository state and rules at session start. This plugin can refuse actions.",
+  "author": {
+    "name": "yurifws",
+    "email": "yurifws@gmail.com"
+  },
+  "homepage": "https://github.com/yurifws/ai_marketplace/tree/main/plugins/guard-rails",
+  "repository": "https://github.com/yurifws/ai_marketplace",
+  "license": "MIT",
+  "keywords": ["security", "hooks", "secrets", "credentials", "guardrails", "git"]
+}

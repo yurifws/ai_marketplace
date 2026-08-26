@@ -1,0 +1,14 @@
+{
+  "extraKnownMarketplaces": {
+    "ai-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "yurifws/ai_marketplace"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "commit-craft@ai-marketplace": true,
+    "guard-rails@ai-marketplace": true
+  }
+}
