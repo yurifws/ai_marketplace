@@ -13,6 +13,13 @@ Both must match, or `claude plugin update` will not notice the new version.
 
 ### Added
 
+- `SECURITY.md` — reporting policy. Notably, a `guard-rails` **false positive** is
+  in scope as a defect of the same severity as a false negative, and the document
+  states plainly that the plugin is a safety net rather than a security boundary.
+- `docs/team-setup.md` and a checked-in `.claude/settings.json` example — how to
+  roll this out to a team, including the constraint that no setting can
+  force-install a plugin: declaring a marketplace in a project removes the
+  discovery step, not the per-person install.
 - **focus-mode 0.1.0** — the third and final rule mechanism: a `settings.json`
   containing only `{ "agent": "focus" }`, which replaces the main thread's system
   prompt for every session. Ships as a separate plugin precisely so it can be
